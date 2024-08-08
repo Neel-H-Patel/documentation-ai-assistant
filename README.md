@@ -5,7 +5,9 @@
 3. type cmd+shift+P (mac) or cntrl+shift+P(windows) to open command pallete 
 4. Search for "Search WDS Blog Example" and press enter 
 
-
+make sure axios is installed with "npm install axios". Lets you retrieve the xml data 
+make sure fast-xml-parser is installed with "npm i fast-xml-parser" 
+fast xml parser converts xml into json so it is easier to work with in JavaScript.  
 # customextension README
 
 This is the README for your extension "customextension". After writing up a brief description, we recommend including the following sections.
