@@ -1,3 +1,11 @@
+# To Test Extension 
+
+1. Open extension.js file 
+2. press F5 to open extension test window 
+3. type cmd+shift+P (mac) or cntrl+shift+P(windows) to open command pallete 
+4. Search for "Search WDS Blog Example" and press enter 
+
+
 # customextension README
 
 This is the README for your extension "customextension". After writing up a brief description, we recommend including the following sections.
