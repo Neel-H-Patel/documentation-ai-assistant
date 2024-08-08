@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
+const axios = require('axios'); 
+const { XMLParser } = require('fast-xml-parser');
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -8,8 +10,12 @@ const vscode = require('vscode');
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
+async function activate(context) {
 
+	const res = await axios.get("https://www.w3schools.com/xml/note.xml")
+	const parser = new XMLParser() 
+	const parsed_res = parser.parse(res.data)
+	console.log(parsed_res)
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "customextension" is now active!');
