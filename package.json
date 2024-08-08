@@ -13,8 +13,8 @@
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "customextension.helloWorld",
-      "title": "Hello World"
+      "command": "customextension.searchWdsBlogExample",
+      "title": "Search WDS Blog Example"
     }]
   },
   "scripts": {
