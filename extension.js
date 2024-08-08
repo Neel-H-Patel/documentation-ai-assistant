@@ -15,10 +15,12 @@ async function activate(context) {
 	const res = await axios.get("https://www.w3schools.com/xml/note.xml")
 	const parser = new XMLParser() 
 	const parsed_res = parser.parse(res.data)
-	console.log(parsed_res)
+	//console.log(parsed_res)
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "customextension" is now active!');
+	//console.log('Congratulations, your extension "customextension" is now active!');
+
+	console.log("THE BODY IS: \n", parsed_res.note.body); 
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
