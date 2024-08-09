@@ -1,6 +1,7 @@
 {
   "name": "customextension",
   "displayName": "customExtension",
+  "publisher": "MaxAndManny", 
   "description": "This extension shows the level of abstraction in your program  to help you make better architectural decisions.",
   "version": "0.0.1",
   "engines": {
