@@ -2,9 +2,6 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const axios = require('axios');
-// import filesystem and path modules to read local files 
-const fs = require('fs');
-const path = require('path');
 
 const { XMLParser } = require('fast-xml-parser');
 
@@ -14,7 +11,7 @@ const { XMLParser } = require('fast-xml-parser');
 /**
  * @param {vscode.ExtensionContext} context
  */
-async function activate(context) {
+async function activate(context) {   
 
 	const res = await axios.get("https://blog.webdevsimplified.com/rss.xml")
 	//Replace the Axios request with a synchronous file read using fs.readFileSync. This reads the XML file into a string.
@@ -27,7 +24,8 @@ async function activate(context) {
 	(articles => {
 		return {
 		label: articles.title, 
-		detail: articles.description
+		detail: articles.description, 
+		link: articles.link
 	}})
 	
 
@@ -46,7 +44,9 @@ async function activate(context) {
 		const chosen_article = await vscode.window.showQuickPick(articles, { // creates a search bar like window for you to search through the xml data 
 		matchOnDetail: true //lets you match the title and the description of the xml data in the search bar 
 		})
-		console.log("The User chose: ", chosen_article)
+		if(chosen_article == null) return // if user did not select anything, then exit 
+
+		vscode.env.openExternal(chosen_article.link)
 	});
 	
 	context.subscriptions.push(disposable);
