@@ -5,9 +5,12 @@
 3. type cmd+shift+P (mac) or cntrl+shift+P(windows) to open command pallete 
 4. Search for "Search WDS Blog Example" and press enter 
 
-make sure axios is installed with "npm install axios". Lets you retrieve the xml data 
-make sure fast-xml-parser is installed with "npm i fast-xml-parser" 
-fast xml parser converts xml into json so it is easier to work with in JavaScript.  
+Get editor property, get lang ID from editor property. 
+
+This lets us identify what type of language the file is. 
+
+This extension should identify the code in a folder and idiomatically match it with corresponding code in a different language to help users make a jump from one language to another. 
+  
 # customextension README
 
 This is the README for your extension "customextension". After writing up a brief description, we recommend including the following sections.

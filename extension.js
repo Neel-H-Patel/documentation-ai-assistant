@@ -1,9 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const axios = require('axios');
-
-const { XMLParser } = require('fast-xml-parser');
+const path = require('path'); // Import the path module
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -12,44 +10,100 @@ const { XMLParser } = require('fast-xml-parser');
  * @param {vscode.ExtensionContext} context
  */
 async function activate(context) {   
-
-	const res = await axios.get("https://blog.webdevsimplified.com/rss.xml")
-	//Replace the Axios request with a synchronous file read using fs.readFileSync. This reads the XML file into a string.
-	//const filePath = path.join(__dirname, 'simple.xml'); // Path to your local XML file
-	//const xmlData = fs.readFileSync(filePath, 'utf-8');  // Read the file content as a string
-
-	const parser = new XMLParser() 
-	//replace xmlData.data with res.data if using axios.get instead of lines 21-22
-	const articles = parser.parse(res.data).rss.channel.item.map
-	(articles => {
-		return {
-		label: articles.title, 
-		detail: articles.description, 
-		link: articles.link
-	}})
-	
-
-
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	//console.log('Congratulations, your extension "customextension" is now active!');
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
    
+	const disposable = vscode.commands.registerCommand('customextension.searchWdsBlogExample', function () {
+		let editor = vscode.window.activeTextEditor; 
+		if(editor){
+			let fileUri = editor.document.uri;
+    		let filePathUri = fileUri.fsPath;
+    		console.log("The file path is: " + filePathUri);
 
-	const disposable = vscode.commands.registerCommand('customextension.searchWdsBlogExample', async function () {
-		//setting note equal to showQuickPick because as soon as someone picks a certain xml data, then it should be set equal to the result 
-		const chosen_article = await vscode.window.showQuickPick(articles, { // creates a search bar like window for you to search through the xml data 
-		matchOnDetail: true //lets you match the title and the description of the xml data in the search bar 
-		})
-		if(chosen_article == null) return // if user did not select anything, then exit 
+			console.log("Editor Document Details: ", editor.document);
+			let filePath = editor.document.fileName;
+			console.log("The path to the file is: " + filePath);
 
-		vscode.env.openExternal(chosen_article.link)
+			let pathString = filePath; 
+			let fileExtension = path.extname(pathString).substring(1).trim(); // Get the file extension and remove the dot
+		
+			console.log("The fileExtension is: " + fileExtension); 
+			let languageType = "unknown"; 
+			
+			// Map file extensions to language types 
+			switch(fileExtension){
+				case 'py': 
+					languageType = "Python"; 
+					vscode.window.showInformationMessage('Python found!') 	
+					break; 
+				case 'js': 
+					languageType = "JavaScript";
+					vscode.window.showInformationMessage('Javascript found!') 
+					break; 
+				case 'html': 
+					languageType = "HTML";
+					vscode.window.showInformationMessage('HTML found!') 	 
+					break; 
+				case 'css': 
+					languageType = "CSS"; 
+					vscode.window.showInformationMessage('CSS found!') 	
+					break; 
+				// Add more languages if needed 
+				default: 
+					languageType = "Unknown or Unsupported"; 
+					break; 
+			}
+			
+			// Create and show the webview panel
+            const panel = vscode.window.createWebviewPanel(
+                'codeExplanation', // Identifies the type of the webview. Used internally
+                'Code Explanation', // Title of the panel displayed to the user
+                vscode.ViewColumn.Beside, // Open the webview beside the current editor
+                {
+                    enableScripts: true, // Enable JavaScript in the webview
+                }
+            );
+
+            // Set the HTML content for the webview
+            panel.webview.html = getWebviewContent(languageType);
+
+			// display the detected language type 
+			vscode.window.showInformationMessage(`Detected Language: ${languageType}`); 
+		} else {
+			vscode.window.showInformationMessage("No File found"); 
+		}
+		
 	});
 	
 	context.subscriptions.push(disposable);
+}
+
+// Function to generate the HTML content for the webview
+function getWebviewContent(languageType) {
+    return `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Code Explanation</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 10px;
+            }
+            h1 {
+                color: #007acc;
+            }
+            pre {
+                background-color: #f4f4f4;
+                padding: 10px;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Detected Language: ${languageType}</h1>
+        <p>This panel shows information related to the detected programming language of your file.</p>
+    </body>
+    </html>`;
 }
 
 // This method is called when your extension is deactivated
