@@ -1,22 +1,8 @@
-# To Test Extension 
+# basic-code-helper README
 
-1. Open extension.js file 
-2. press F5 to open extension test window 
-3. type cmd+shift+P (mac) or cntrl+shift+P(windows) to open command pallete 
-4. Search for "Search WDS Blog Example" and press enter 
-
-Get editor property, get lang ID from editor property. 
-
-This lets us identify what type of language the file is. 
-
-This extension should identify the code in a folder and idiomatically match it with corresponding code in a different language to help users make a jump from one language to another. 
-  
-# customextension README
-
-This is the README for your extension "customextension". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "basic-code-helper". After writing up a brief description, we recommend including the following sections.
 
 ## Features
-Dab 
 
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
@@ -63,13 +49,19 @@ Added features X, Y, and Z.
 
 ---
 
+## Following extension guidelines
+
+Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+
+* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+
 ## Working with Markdown
 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
+* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
+* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
+* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
 
 ## For more information
 
