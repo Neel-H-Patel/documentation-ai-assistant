@@ -11,14 +11,14 @@
   ],
   "activationEvents": [
     "onCommand:basic-code-helper.showSelectedCode",
-    "onLanguage:*" 
+    "onLanguage:*"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "basic-code-helper.showSelectedCode",
-        "title": "Show Selected Code"
+        "title": "Explain Selected Code"
       }
     ],
     "menus": {
@@ -33,8 +33,12 @@
     "languages": [
       {
         "id": "*",
-        "aliases": ["All Files"],
-        "extensions": ["*"]
+        "aliases": [
+          "All Files"
+        ],
+        "extensions": [
+          "*"
+        ]
       }
     ]
   },
@@ -49,7 +53,10 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.92.0",
-    "typescript": "^5.4.5",
-    "eslint": "^8.57.0"
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "openai": "^4.57.3"
   }
 }
