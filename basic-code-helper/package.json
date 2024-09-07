@@ -1,7 +1,7 @@
 {
   "name": "basic-code-helper",
   "displayName": "basic-code-helper",
-  "description": "testing",
+  "description": "A VS Code extension to explain code using OpenAI Assistant",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.92.0"
@@ -52,9 +52,11 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.7",
     "@types/vscode": "^1.92.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.4.5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "openai": "^4.57.3"

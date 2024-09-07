@@ -1,16 +1,154 @@
 import * as vscode from 'vscode';
+import { createAssistant, createThread, addMessage, streamAssistantResponse } from './assistantAPI';
 
-const OPENAI_API_KEY = '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';  // Replace with your OpenAI API key
+let currentPanel: vscode.WebviewPanel | undefined = undefined;
 
+// Function to create or show the webview panel
+function createOrShowWebviewPanel() {
+    if (currentPanel) {
+        currentPanel.reveal(vscode.ViewColumn.One);
+    } else {
+        currentPanel = vscode.window.createWebviewPanel(
+            'codeExplainer',
+            'Code Explanation',
+            vscode.ViewColumn.One,
+            { enableScripts: true }
+        );
+
+        currentPanel.onDidDispose(() => {
+            currentPanel = undefined;
+        });
+
+        currentPanel.webview.html = getWebviewContent();
+    }
+}
+
+function updateWebviewContent(response: string) {
+    console.log("Sending to webview:", response);  // Add logging to check if this is firing
+    if (currentPanel) {
+        currentPanel.webview.postMessage({ type: 'updateContent', value: response });
+    } else {
+        vscode.window.showErrorMessage('No webview to send message to.');
+    }
+}
+
+// Function to return HTML content for the webview
+function getWebviewContent(): string {
+    return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Code Explanation</title>
+        </head>
+        <body>
+            <h1>Code Explanation</h1>
+            <div id="explanation-content">Waiting for the explanation...</div>
+            <script>
+                window.addEventListener('message', event => {
+                    const message = event.data;
+                    if (message.type === 'updateContent') {
+                        document.getElementById('explanation-content').innerText = message.value;
+                    }
+                });
+            </script>
+			<script>
+				window.addEventListener('message', event => {
+					const message = event.data;
+					console.log("Message received in webview:", message);  // Log to ensure message is received
+					if (message.type === 'updateContent') {
+						document.getElementById('explanation-content').innerText = message.value;
+					}
+				});
+			</script>
+        </body>
+        </html>`;
+}
+
+// Function to limit the response to a word count
+function limitToWordCount(text: string, wordLimit: number): string {
+    const words = text.split(/\s+/);
+    if (words.length > wordLimit) {
+        return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return text;
+}
+
+// Function to handle calling the Assistant API and updating the webview
+async function explainCodeUsingAssistant(codeSnippet: string) {
+    try {
+        const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+        statusBar.text = `Explaining code...`;
+        statusBar.show();
+
+        const assistant = await createAssistant();
+        const thread = await createThread();
+
+        await addMessage(thread.id, `Explain what the following code does:\n\n${codeSnippet}`);
+
+        let response = '';
+        await streamAssistantResponse(assistant.id, thread.id, (data: string) => {
+            console.log("Received data chunk:", data);  // Log each data chunk
+            response += data;  // Append data to response
+            console.log("Current response:", response);  // Log the response being built
+            statusBar.text = `Explaining code... ${response.length} chars received`;
+        });
+
+        // Add a short delay to ensure the full response is received
+        await new Promise(resolve => setTimeout(resolve, 2000));  // Delay for 2 seconds
+
+        const limitedResponse = limitToWordCount(response, 200);
+        console.log("Final response (limited):", limitedResponse);  // Log the final limited response
+        createOrShowWebviewPanel();
+        updateWebviewContent(limitedResponse);
+
+        statusBar.dispose();
+
+    } catch (error) {
+        console.error("Failed to get explanation from OpenAI Assistant:", error);
+        vscode.window.showErrorMessage('Failed to get explanation from OpenAI Assistant. Please try again.');
+    }
+}
+
+
+
+
+// Define the CodeActionProvider for the lightbulb
+class ShowSelectedCodeActionProvider implements vscode.CodeActionProvider {
+    static readonly providedCodeActionKinds = [
+        vscode.CodeActionKind.QuickFix
+    ];
+
+    public provideCodeActions(
+        document: vscode.TextDocument,
+        range: vscode.Range
+    ): vscode.CodeAction[] | undefined {
+        if (range.isEmpty) {
+            return;
+        }
+
+        const selectedText = document.getText(range);
+        const action = new vscode.CodeAction(`Explain selected code`, vscode.CodeActionKind.QuickFix);
+
+        action.command = {
+            command: 'basic-code-helper.showSelectedCode',
+            title: 'Explain Selected Code',
+            arguments: [selectedText]
+        };
+
+        return [action];
+    }
+}
+
+// This function gets called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "basic-code-helper" is now active!');
 
-    // Register the command to show the selected code and retrieve explanation from OpenAI
+    // Register the command to explain the selected code
     let disposable = vscode.commands.registerCommand('basic-code-helper.showSelectedCode', async (selectedText: string) => {
         if (selectedText) {
-            // Call OpenAI API to get explanation of the selected code
-            const explanation = await getExplanationFromOpenAI(selectedText);
-            vscode.window.showInformationMessage(`OpenAI Response: ${explanation}`);
+            await explainCodeUsingAssistant(selectedText);
         } else {
             vscode.window.showInformationMessage('No code selected');
         }
@@ -26,63 +164,5 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(codeActionProvider);
 }
 
+// This function gets called when your extension is deactivated
 export function deactivate() {}
-
-interface OpenAIResponse {
-    choices: Array<{
-        text: string;
-    }>;
-}
-
-// Call OpenAI API to get an explanation of the code
-async function getExplanationFromOpenAI(codeSnippet: string): Promise<string> {
-    const response = await fetch('https://api.openai.com/v1/completions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-            model: 'text-davinci-003',  // You can use the latest GPT model
-            prompt: `Explain what the following code does:\n\n${codeSnippet}`,
-            max_tokens: 100,
-        }),
-    });
-
-    // Typecast the response to the OpenAIResponse interface
-    const data = await response.json() as OpenAIResponse;
-
-    // Safely access the choices and return the explanation text
-    return data.choices && data.choices[0].text.trim() || "No explanation available.";
-}
-
-// Define the CodeActionProvider for the lightbulb
-class ShowSelectedCodeActionProvider implements vscode.CodeActionProvider {
-
-    static readonly providedCodeActionKinds = [
-        vscode.CodeActionKind.QuickFix
-    ];
-
-    public provideCodeActions(
-        document: vscode.TextDocument,
-        range: vscode.Range
-    ): vscode.CodeAction[] | undefined {
-        if (range.isEmpty) {
-            return;
-        }
-
-        const selectedText = document.getText(range);
-
-        // Create a CodeAction (lightbulb option)
-        const action = new vscode.CodeAction(`Explain selected code`, vscode.CodeActionKind.QuickFix);
-
-        // Link this action to the command and pass the selected text as an argument
-        action.command = {
-            command: 'basic-code-helper.showSelectedCode',
-            title: 'Explain Selected Code',
-            arguments: [selectedText]  // Pass the selected text to the command
-        };
-
-        return [action];
-    }
-}
