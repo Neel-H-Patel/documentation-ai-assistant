@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import { createAssistant, createThread, addMessage, streamAssistantResponse, getAssistant } from './assistantAPI';
+const vscode = require('vscode');
+const { createAssistant, createThread, addMessage, streamAssistantResponse, getAssistant } = require('./assistantAPI');
 
-let currentPanel: vscode.WebviewPanel | undefined = undefined;
+let currentPanel = undefined;
 
 // Function to create or show the webview panel
 function createOrShowWebviewPanel() {
@@ -23,7 +23,7 @@ function createOrShowWebviewPanel() {
     }
 }
 
-function updateWebviewContent(response: string) {
+function updateWebviewContent(response) {
     console.log("Sending to webview:", response);  // Add logging to check if this is firing
     if (currentPanel) {
         currentPanel.webview.postMessage({ type: 'updateContent', value: response });
@@ -33,7 +33,7 @@ function updateWebviewContent(response: string) {
 }
 
 // Function to return HTML content for the webview
-function getWebviewContent(): string {
+function getWebviewContent() {
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -53,21 +53,21 @@ function getWebviewContent(): string {
                     }
                 });
             </script>
-			<script>
-				window.addEventListener('message', event => {
-					const message = event.data;
-					console.log("Message received in webview:", message);  // Log to ensure message is received
-					if (message.type === 'updateContent') {
-						document.getElementById('explanation-content').innerText = message.value;
-					}
-				});
-			</script>
+            <script>
+                window.addEventListener('message', event => {
+                    const message = event.data;
+                    console.log("Message received in webview:", message);  // Log to ensure message is received
+                    if (message.type === 'updateContent') {
+                        document.getElementById('explanation-content').innerText = message.value;
+                    }
+                });
+            </script>
         </body>
         </html>`;
 }
 
 // Function to limit the response to a word count
-function limitToWordCount(text: string, wordLimit: number): string {
+function limitToWordCount(text, wordLimit) {
     const words = text.split(/\s+/);
     if (words.length > wordLimit) {
         return words.slice(0, wordLimit).join(' ') + '...';
@@ -76,7 +76,7 @@ function limitToWordCount(text: string, wordLimit: number): string {
 }
 
 // Function to handle calling the Assistant API and updating the webview
-async function explainCodeUsingAssistant(codeSnippet: string) {
+async function explainCodeUsingAssistant(codeSnippet) {
     try {
         const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
         statusBar.text = `Explaining code...`;
@@ -88,7 +88,7 @@ async function explainCodeUsingAssistant(codeSnippet: string) {
         await addMessage(thread.id, `Explain what the following code does:\n\n${codeSnippet}`);
 
         let response = '';
-        await streamAssistantResponse(assistant.id, thread.id, (data: string) => {
+        await streamAssistantResponse(assistant.id, thread.id, (data) => {
             console.log("Received data chunk:", data);  // Log each data chunk
             response += data;  // Append data to response
             console.log("Current response:", response);  // Log the response being built
@@ -96,7 +96,7 @@ async function explainCodeUsingAssistant(codeSnippet: string) {
         });
 
         // Add a short delay to ensure the full response is received
-        await new Promise(resolve => setTimeout(resolve, 10000));  // Delay for 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 10000));  // Delay for 10 seconds
 
         const limitedResponse = limitToWordCount(response, 200);
         console.log("Final response (limited):", limitedResponse);  // Log the final limited response
@@ -111,19 +111,13 @@ async function explainCodeUsingAssistant(codeSnippet: string) {
     }
 }
 
-
-
-
 // Define the CodeActionProvider for the lightbulb
-class ShowSelectedCodeActionProvider implements vscode.CodeActionProvider {
-    static readonly providedCodeActionKinds = [
+class ShowSelectedCodeActionProvider {
+    static providedCodeActionKinds = [
         vscode.CodeActionKind.QuickFix
     ];
 
-    public provideCodeActions(
-        document: vscode.TextDocument,
-        range: vscode.Range
-    ): vscode.CodeAction[] | undefined {
+    provideCodeActions(document, range) {
         if (range.isEmpty) {
             return;
         }
@@ -142,11 +136,11 @@ class ShowSelectedCodeActionProvider implements vscode.CodeActionProvider {
 }
 
 // This function gets called when your extension is activated
-export function activate(context: vscode.ExtensionContext) {
+function activate(context) {
     console.log('Congratulations, your extension "basic-code-helper" is now active!');
 
     // Register the command to explain the selected code
-    let disposable = vscode.commands.registerCommand('basic-code-helper.showSelectedCode', async (selectedText: string) => {
+    let disposable = vscode.commands.registerCommand('basic-code-helper.showSelectedCode', async (selectedText) => {
         if (selectedText) {
             await explainCodeUsingAssistant(selectedText);
         } else {
@@ -165,4 +159,9 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // This function gets called when your extension is deactivated
-export function deactivate() {}
+function deactivate() {}
+
+module.exports = {
+    activate,
+    deactivate
+};

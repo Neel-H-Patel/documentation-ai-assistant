@@ -1,10 +1,10 @@
-import OpenAI from 'openai';
+const OpenAI = require('openai');
 
 const openai = new OpenAI({
     apiKey: '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',  // Replace with your actual OpenAI API key
 });
 
-export async function createAssistant() {
+async function createAssistant() {
     // Create the assistant
     const assistant = await openai.beta.assistants.create({
         name: "Code Explainer",
@@ -15,20 +15,20 @@ export async function createAssistant() {
     return assistant;
 }
 
-export async function getAssistant() {
+async function getAssistant() {
     const assistant = await openai.beta.assistants.retrieve(
         "asst_SM507E8aPpmOFRIIqpIT5DBe"
     );
     return assistant;
 }
 
-export async function createThread() {
+async function createThread() {
     // Create a new thread
     const thread = await openai.beta.threads.create();
     return thread;
 }
 
-export async function addMessage(threadId: string, content: string) {
+async function addMessage(threadId, content) {
     // Add a message to the thread
     const message = await openai.beta.threads.messages.create(threadId, {
         role: "user",
@@ -37,7 +37,7 @@ export async function addMessage(threadId: string, content: string) {
     return message;
 }
 
-export async function streamAssistantResponse(assistantId: string, threadId: string, onData: (data: string) => void, retries = 3) {
+async function streamAssistantResponse(assistantId, threadId, onData, retries = 3) {
     try {
         const run = openai.beta.threads.runs.stream(threadId, {
             assistant_id: assistantId
@@ -64,4 +64,13 @@ export async function streamAssistantResponse(assistantId: string, threadId: str
         }
     }
 }
+
+module.exports = {
+    createAssistant,
+    getAssistant,
+    createThread,
+    addMessage,
+    streamAssistantResponse
+};
+
 
