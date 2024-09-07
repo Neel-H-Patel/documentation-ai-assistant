@@ -1,2 +1,4 @@
+const y = 50;
+
 // what is the syntax of declaring a variable for ts.
 const x = 42;

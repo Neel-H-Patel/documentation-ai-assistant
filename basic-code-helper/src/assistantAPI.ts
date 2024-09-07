@@ -15,6 +15,13 @@ export async function createAssistant() {
     return assistant;
 }
 
+export async function getAssistant() {
+    const assistant = await openai.beta.assistants.retrieve(
+        "asst_SM507E8aPpmOFRIIqpIT5DBe"
+    );
+    return assistant;
+}
+
 export async function createThread() {
     // Create a new thread
     const thread = await openai.beta.threads.create();

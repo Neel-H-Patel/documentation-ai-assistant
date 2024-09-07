@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { createAssistant, createThread, addMessage, streamAssistantResponse } from './assistantAPI';
+import { createAssistant, createThread, addMessage, streamAssistantResponse, getAssistant } from './assistantAPI';
 
 let currentPanel: vscode.WebviewPanel | undefined = undefined;
 
@@ -82,7 +82,7 @@ async function explainCodeUsingAssistant(codeSnippet: string) {
         statusBar.text = `Explaining code...`;
         statusBar.show();
 
-        const assistant = await createAssistant();
+        const assistant = await getAssistant();
         const thread = await createThread();
 
         await addMessage(thread.id, `Explain what the following code does:\n\n${codeSnippet}`);
@@ -96,7 +96,7 @@ async function explainCodeUsingAssistant(codeSnippet: string) {
         });
 
         // Add a short delay to ensure the full response is received
-        await new Promise(resolve => setTimeout(resolve, 2000));  // Delay for 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 10000));  // Delay for 2 seconds
 
         const limitedResponse = limitToWordCount(response, 200);
         console.log("Final response (limited):", limitedResponse);  // Log the final limited response
