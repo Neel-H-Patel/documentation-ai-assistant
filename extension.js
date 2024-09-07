@@ -126,7 +126,7 @@ class ShowSelectedCodeActionProvider {
         const action = new vscode.CodeAction(`Explain selected code`, vscode.CodeActionKind.QuickFix);
 
         action.command = {
-            command: 'basic-code-helper.showSelectedCode',
+            command: 'documentation-ai-tutor.showSelectedCode',
             title: 'Explain Selected Code',
             arguments: [selectedText]
         };
@@ -137,10 +137,10 @@ class ShowSelectedCodeActionProvider {
 
 // This function gets called when your extension is activated
 function activate(context) {
-    console.log('Congratulations, your extension "basic-code-helper" is now active!');
+    console.log('Congratulations, your extension "documentation-ai-tutor" is now active!');
 
     // Register the command to explain the selected code
-    let disposable = vscode.commands.registerCommand('basic-code-helper.showSelectedCode', async (selectedText) => {
+    let disposable = vscode.commands.registerCommand('documentation-ai-tutor.showSelectedCode', async (selectedText) => {
         if (selectedText) {
             await explainCodeUsingAssistant(selectedText);
         } else {

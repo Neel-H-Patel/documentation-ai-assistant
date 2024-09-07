@@ -1,7 +1,7 @@
 {
-  "name": "basic-code-helper",
-  "displayName": "basic-code-helper",
-  "description": "A VS Code extension to explain code using OpenAI Assistant",
+  "name": "documentation-ai-tutor",
+  "displayName": "Documentation AI Tutor",
+  "description": "A VS Code extension to explain code, give code examples, and provide documentation links using OpenAI Assistant",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.92.0"
@@ -10,21 +10,21 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:basic-code-helper.showSelectedCode",
+    "onCommand:documentation-ai-tutor.showSelectedCode",
     "onLanguage:*"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "basic-code-helper.showSelectedCode",
+        "command": "documentation-ai-tutor.showSelectedCode",
         "title": "Explain Selected Code"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "basic-code-helper.showSelectedCode",
+          "command": "documentation-ai-tutor.showSelectedCode",
           "when": "editorHasSelection",
           "group": "navigation"
         }
@@ -52,6 +52,6 @@
     "eslint": "^8.57.0"
   },
   "dependencies": {
-    "openai": "^4.57.3"
+    "openai": "^4.58.1"
   }
 }

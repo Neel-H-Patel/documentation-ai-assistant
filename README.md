@@ -1,4 +1,4 @@
-# Documentation AI Assistant: VS Code Extension ✨
+# Documentation AI Tutor: VS Code Extension ✨
 
 ![Version](https://img.shields.io/badge/version-1.0-blue)
 
