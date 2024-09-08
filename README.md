@@ -39,4 +39,4 @@ A VS Code extension that integrates GPT-4-mini API to provide real-time, context
 
 ## Contact
 
-Created by [Neel Patel](https://www.linkedin.com/in/neel-h-patel1/)
+Created by [Neel Patel](https://www.linkedin.com/in/neel-h-patel1/), [Manny Garcia](https://www.linkedin.com/in/mannygarciap/), and [Max Link](https://www.linkedin.com/in/max-link/)
