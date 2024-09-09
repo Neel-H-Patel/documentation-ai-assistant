@@ -2,7 +2,29 @@
   "name": "documentation-ai-tutor",
   "displayName": "Documentation AI Tutor",
   "description": "A VS Code extension to explain code, give code examples, and provide documentation links using OpenAI Assistant",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "publisher": "SMUCoderClan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Neel-H-Patel/documentation-ai-assistant.git"
+  },
+  "contributors": [
+    {
+      "name": "Neel Patel",
+      "email": "neel.hpatel@outlook.com",
+      "url": "https://www.linkedin.com/in/neel-h-patel1/"
+    },
+    {
+      "name": "Manny Garcia",
+      "email": "mannygrealestate@gmail.com",
+      "url": "https://www.linkedin.com/in/mannygarciap/"
+    },
+    {
+      "name": "Max Link",
+      "email": "mdlink@smu.edu",
+      "url": "https://www.linkedin.com/in/max-link/"
+    }
+  ],
   "engines": {
     "vscode": "^1.92.0"
   },
@@ -11,7 +33,7 @@
   ],
   "activationEvents": [
     "onCommand:documentation-ai-tutor.showSelectedCode",
-    "onLanguage:*"
+    "*"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -29,18 +51,7 @@
           "group": "navigation"
         }
       ]
-    },
-    "languages": [
-      {
-        "id": "*",
-        "aliases": [
-          "All Files"
-        ],
-        "extensions": [
-          "*"
-        ]
-      }
-    ]
+    }
   },
   "scripts": {
     "lint": "eslint src --ext js",
@@ -50,7 +61,7 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.4",
     "@babel/preset-react": "^7.24.7",
-    "@types/vscode": "^1.93.0",
+    "@types/vscode": "^1.92.0",
     "@vscode/test-electron": "^2.4.1",
     "babel-loader": "^9.1.3",
     "eslint": "^8.57.0",
