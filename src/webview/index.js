@@ -52,7 +52,13 @@ const CodeExplanation = ({ explanation }) => {
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             <h2>Code Example</h2>
-            <pre style={{ backgroundColor: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
+            <pre style={{
+                backgroundColor: '#2d2d2d',  // Darker background color (dark gray)
+                color: '#f8f8f2',            // Light text color (off-white)
+                padding: '10px',
+                borderRadius: '5px',
+                fontFamily: 'monospace'      // Ensure it's rendered as monospaced font
+            }}>
                 {codeExample}
             </pre>
 

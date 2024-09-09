@@ -33589,9 +33589,13 @@ var CodeExplanation = function CodeExplanation(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", null, "Code Example"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("pre", {
     style: {
-      backgroundColor: '#f4f4f4',
+      backgroundColor: '#2d2d2d',
+      // Darker background color (dark gray)
+      color: '#f8f8f2',
+      // Light text color (off-white)
       padding: '10px',
-      borderRadius: '5px'
+      borderRadius: '5px',
+      fontFamily: 'monospace' // Ensure it's rendered as monospaced font
     }
   }, codeExample), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", null, "Explanation"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, explanationText), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", null, "Documentation Links"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("ul", null, documentationLinks.length > 0 ? documentationLinks.map(function (link, index) {
     var linkParts = link.match(/\[([^\]]+)\]\(([^)]+)\)/); // Extract text and URL from markdown link

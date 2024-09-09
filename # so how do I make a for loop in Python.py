@@ -1,1 +1,0 @@
-# so how do I make a for loop in Python
