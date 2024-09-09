@@ -1,10 +1,12 @@
 const vscode = require('vscode');
 const { createAssistant, createThread, addMessage, streamAssistantResponse, getAssistant } = require('./assistantAPI');
+const path = require('path');
+const fs = require('fs');
 
 let currentPanel = undefined;
 
 // Function to create or show the webview panel
-function createOrShowWebviewPanel() {
+function createOrShowWebviewPanel(extensionPath) {
     if (currentPanel) {
         currentPanel.reveal(vscode.ViewColumn.One);
     } else {
@@ -19,52 +21,45 @@ function createOrShowWebviewPanel() {
             currentPanel = undefined;
         });
 
-        currentPanel.webview.html = getWebviewContent();
+        currentPanel.webview.html = getWebviewContent(currentPanel, extensionPath);
     }
 }
 
 function updateWebviewContent(response) {
-    console.log("Sending to webview:", response);  // Add logging to check if this is firing
+    console.log("Sending to webview:", response);  // Log the response to ensure it's structured as expected
     if (currentPanel) {
-        currentPanel.webview.postMessage({ type: 'updateContent', value: response });
+        currentPanel.webview.postMessage({
+            type: 'updateContent',
+            value: response  // Send the full response to the webview
+        });
+        console.log("Message posted to webview");
     } else {
         vscode.window.showErrorMessage('No webview to send message to.');
     }
 }
 
+
 // Function to return HTML content for the webview
-function getWebviewContent() {
+function getWebviewContent(panel, extensionPath) {
+    const scriptPath = path.join(extensionPath, 'dist', 'bundle.js');
+    const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(scriptPath));
+  
     return `
-        <!DOCTYPE html>
-        <html lang="en">
+      <!DOCTYPE html>
+      <html lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Code Explanation</title>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Code Explanation</title>
         </head>
         <body>
-            <h1>Code Explanation</h1>
-            <div id="explanation-content">Waiting for the explanation...</div>
-            <script>
-                window.addEventListener('message', event => {
-                    const message = event.data;
-                    if (message.type === 'updateContent') {
-                        document.getElementById('explanation-content').innerText = message.value;
-                    }
-                });
-            </script>
-            <script>
-                window.addEventListener('message', event => {
-                    const message = event.data;
-                    console.log("Message received in webview:", message);  // Log to ensure message is received
-                    if (message.type === 'updateContent') {
-                        document.getElementById('explanation-content').innerText = message.value;
-                    }
-                });
-            </script>
+          <div id="root"></div>
+          <script src="${scriptUri}"></script>
         </body>
-        </html>`;
-}
+      </html>
+    `;
+  }
+  
 
 // Function to limit the response to a word count
 function limitToWordCount(text, wordLimit) {
@@ -76,7 +71,7 @@ function limitToWordCount(text, wordLimit) {
 }
 
 // Function to handle calling the Assistant API and updating the webview
-async function explainCodeUsingAssistant(codeSnippet) {
+async function explainCodeUsingAssistant(codeSnippet, extensionPath) {
     try {
         const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
         statusBar.text = `Explaining code...`;
@@ -100,7 +95,7 @@ async function explainCodeUsingAssistant(codeSnippet) {
 
         const limitedResponse = limitToWordCount(response, 200);
         console.log("Final response (limited):", limitedResponse);  // Log the final limited response
-        createOrShowWebviewPanel();
+        createOrShowWebviewPanel(extensionPath);
         updateWebviewContent(limitedResponse);
 
         statusBar.dispose();
@@ -142,7 +137,7 @@ function activate(context) {
     // Register the command to explain the selected code
     let disposable = vscode.commands.registerCommand('documentation-ai-tutor.showSelectedCode', async (selectedText) => {
         if (selectedText) {
-            await explainCodeUsingAssistant(selectedText);
+            await explainCodeUsingAssistant(selectedText, context.extensionPath);
         } else {
             vscode.window.showInformationMessage('No code selected');
         }
