@@ -6,7 +6,7 @@
 
 A VS Code extension that integrates GPT-4-mini API to provide real-time, contextual code explanations. Developed on a team of three, this project enhances developer productivity by 25% and improves code comprehension with an interactive learning interface.
 
-[Get it on the VS Code Marketplace]([https://marketplace.visualstudio.com/items?itemName=SMUCoderClan.documentation-ai-tutor])
+[Get it on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SMUCoderClan.documentation-ai-tutor)
 
 ## Key Features
 
